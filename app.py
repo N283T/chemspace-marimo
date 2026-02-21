@@ -127,7 +127,7 @@ def _(HDBSCAN, min_cluster_slider, np, x_coords, y_coords):
 @app.cell
 def scatter_plot(labels, mo, n_clusters, n_noise, plt, x_coords, y_coords):
     """Interactive scatter plot colored by HDBSCAN cluster."""
-    fig, ax = plt.subplots(figsize=(10, 5))
+    fig, ax = plt.subplots(figsize=(10, 6))
 
     # Noise points in gray
     noise_mask = labels == -1
