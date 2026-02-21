@@ -20,14 +20,7 @@ Select molecules on a t-SNE scatter plot using box or lasso selection, and inspe
 ## Quick Start
 
 ```bash
-uv sync
-uv run marimo edit app.py
+uvx marimo edit --sandbox app.py
 ```
 
-## Dependencies
-
-- marimo
-- matplotlib
-- rdkit
-- openTSNE
-- scikit-learn
+Dependencies are declared inline via [PEP 723](https://peps.python.org/pep-0723/) and installed automatically with `--sandbox`.
