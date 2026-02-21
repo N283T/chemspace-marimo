@@ -4,6 +4,10 @@ Interactive chemical space viewer built with [marimo](https://marimo.io/).
 
 Select molecules on a t-SNE scatter plot using box or lasso selection, and inspect their structures and properties in a reactive table.
 
+## Demo
+
+![Chemical Space Viewer Demo](marimo-chemspace.gif)
+
 ## Features
 
 - **2000 NCI molecules** from RDKit built-in dataset
