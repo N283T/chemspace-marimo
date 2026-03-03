@@ -14,3 +14,6 @@ __marimo__/
 
 # Ruff cache
 .ruff_cache/
+
+# Local Python version (pyenv)
+.python-version
