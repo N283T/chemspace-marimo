@@ -1,5 +1,7 @@
 # chemspace-marimo
 
+[![Open in molab](https://molab.marimo.io/molab-shield.svg)](https://molab.marimo.io/notebooks/nb_xixiQPA4uSzd9Ew4tzxrkB)
+
 Interactive chemical space viewer built with [marimo](https://marimo.io/).
 
 Explore chemical space on a t-SNE scatter plot, tune embedding and clustering parameters, and inspect selected molecules in a reactive table.
