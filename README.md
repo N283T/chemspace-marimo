@@ -2,7 +2,7 @@
 
 Interactive chemical space viewer built with [marimo](https://marimo.io/).
 
-Select molecules on a t-SNE scatter plot using box or lasso selection, and inspect their structures and properties in a reactive table.
+Explore chemical space on a t-SNE scatter plot, tune embedding and clustering parameters, and inspect selected molecules in a reactive table.
 
 ## Demo
 
@@ -12,15 +12,22 @@ Select molecules on a t-SNE scatter plot using box or lasso selection, and inspe
 
 - **2000 NCI molecules** from RDKit built-in dataset
 - **Morgan fingerprints** (ECFP4) + Tanimoto distance matrix
-- **openTSNE** 2D embedding with precomputed distances
-- **HDBSCAN** density-based clustering with adjustable slider
+- **scikit-learn TSNE** 2D embedding with precomputed distances
+- **HDBSCAN** density-based clustering
+- **Reactive parameter controls** for t-SNE and HDBSCAN (`mo.ui.number`)
 - **mo.ui.matplotlib** interactive box / lasso selection
 - **Inline SVG structures** in the property table via `format_mapping`
+- **Noise filtering** (`cluster = -1`) for selected rows
 
 ## Quick Start
 
 ```bash
-uvx marimo edit --sandbox app.py
+uv sync
+uv run marimo edit app.py
 ```
 
-Dependencies are declared inline via [PEP 723](https://peps.python.org/pep-0723/) and installed automatically with `--sandbox`.
+Or run as a script with inline dependencies:
+
+```bash
+uv run app.py
+```
