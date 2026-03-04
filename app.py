@@ -15,7 +15,7 @@ __generated_with = "0.20.2"
 app = marimo.App(width="full")
 
 
-@app.cell(hide_code=True)
+@app.cell
 def _():
     """Shared imports."""
     import os
@@ -132,7 +132,7 @@ def _(
     return mols, props_df
 
 
-@app.cell(hide_code=True)
+@app.cell
 def _(mo):
     fp_radius = mo.ui.number(start=1, stop=6, step=1, value=2, label="Morgan radius")
     fp_size = mo.ui.number(
@@ -147,7 +147,7 @@ def _(mo):
     return fp_radius, fp_size
 
 
-@app.cell(hide_code=True)
+@app.cell
 def _(DataStructs, fp_radius, fp_size, mo, mols, np, rdFingerprintGenerator):
     morgan_gen = rdFingerprintGenerator.GetMorganGenerator(
         radius=fp_radius.value, fpSize=fp_size.value
@@ -226,7 +226,7 @@ def _(mo):
     )
 
 
-@app.cell(hide_code=True)
+@app.cell
 def _(
     HDBSCAN,
     TSNE,
@@ -313,9 +313,14 @@ def _(
     return labels, n_clusters, n_noise, x_coords, y_coords
 
 
-@app.cell(hide_code=True)
+@app.cell
 def _(mo):
-    demo_gif = mo.center(mo.image("https://raw.githubusercontent.com/N283T/chemspace-marimo/main/marimo-chemspace_169.gif", width=1200))
+    demo_gif = mo.center(
+        mo.image(
+            "https://raw.githubusercontent.com/N283T/chemspace-marimo/main/marimo-chemspace_169.gif",
+            width=1200,
+        )
+    )
     mo.md(f"""
     ## Selection and Table View
     Select points on the scatter plot (box/lasso with Shift+drag) to inspect
@@ -361,6 +366,7 @@ def _(mo):
 def _(
     cluster_alpha_input,
     labels,
+    load_button,
     mo,
     n_clusters,
     n_noise,
@@ -371,6 +377,13 @@ def _(
     x_coords,
     y_coords,
 ):
+    mo.stop(
+        not load_button.value,
+        mo.callout(
+            mo.md("Click **Load molecules** to load the data."),
+            kind="info",
+        ),
+    )
     fig, ax = plt.subplots(figsize=(10, 6))
     noise_mask = labels == -1
     ax.scatter(
@@ -407,6 +420,7 @@ def selection_display(
     chart,
     include_noise_checkbox,
     labels,
+    load_button,
     mo,
     mol_to_svg,
     np,
@@ -414,6 +428,13 @@ def selection_display(
     x_coords,
     y_coords,
 ):
+    mo.stop(
+        not load_button.value,
+        mo.callout(
+            mo.md("Click **Load molecules** to load the data."),
+            kind="info",
+        ),
+    )
     selected_indices = np.where(chart.value.get_mask(x_coords, y_coords))[0]
     mo.stop(
         len(selected_indices) == 0,
