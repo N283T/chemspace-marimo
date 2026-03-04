@@ -315,7 +315,7 @@ def _(
 
 @app.cell(hide_code=True)
 def _(mo):
-    demo_gif = mo.center(mo.image("marimo-chemspace_169.gif", width=1200))
+    demo_gif = mo.center(mo.image("https://raw.githubusercontent.com/N283T/chemspace-marimo/main/marimo-chemspace_169.gif", width=1200))
     mo.md(f"""
     ## Selection and Table View
     Select points on the scatter plot (box/lasso with Shift+drag) to inspect
