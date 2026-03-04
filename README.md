@@ -1,6 +1,6 @@
 # chemspace-marimo
 
-[![Open in molab](https://molab.marimo.io/molab-shield.svg)](https://molab.marimo.io/notebooks/nb_xixiQPA4uSzd9Ew4tzxrkB)
+[![Open in molab](https://molab.marimo.io/molab-shield.svg)](https://molab.marimo.io/https://github.com/N283T/chemspace-marimo/blob/main/app.py)
 
 Interactive chemical space viewer built with [marimo](https://marimo.io/).
 
