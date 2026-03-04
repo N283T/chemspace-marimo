@@ -58,31 +58,33 @@ def _():
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md("""
+    n_mols = mo.ui.number(
+        start=100, stop=5000, step=100, value=2000, label="Number of molecules"
+    )
+    mo.md(f"""
     ## Data Preparation
     Load NCI molecules from RDKit sample data, compute Morgan fingerprints,
     build a Tanimoto distance matrix, and assemble a `pandas.DataFrame`
     with molecular properties.
+
+    {n_mols}
     """)
-    return
+    return (n_mols,)
 
 
 @app.cell(hide_code=True)
 def _(
     Chem,
-    DataStructs,
     Descriptors,
     Lipinski,
     RDConfig,
     RDLogger,
     mo,
     mol_to_svg,
-    np,
+    n_mols,
     os,
     pd,
-    rdFingerprintGenerator,
 ):
-    n_mols = 2000
     smi_path = os.path.join(RDConfig.RDDataDir, "NCI", "first_5K.smi")
     RDLogger.DisableLog("rdApp.error")
 
@@ -93,16 +95,7 @@ def _(
         smilesColumn=0,
         nameColumn=1,
     )
-    mols = [mol for mol in supplier if mol is not None][:n_mols]
-
-    morgan_gen = rdFingerprintGenerator.GetMorganGenerator(radius=2, fpSize=2048)
-    fps = [morgan_gen.GetFingerprint(mol) for mol in mols]
-
-    dist_matrix = np.zeros((len(mols), len(mols)), dtype=np.float32)
-    for i in range(1, len(mols)):
-        sims = DataStructs.BulkTanimotoSimilarity(fps[i], fps[:i])
-        dist_matrix[i, :i] = 1.0 - np.asarray(sims, dtype=np.float32)
-        dist_matrix[:i, i] = dist_matrix[i, :i]
+    mols = [mol for mol in supplier if mol is not None][: n_mols.value]
 
     props_df = pd.DataFrame(
         {
@@ -124,9 +117,41 @@ def _(
             "CLOGP": lambda x: f"{x:.2f}",
         },
         label=f"Rows : {len(props_df)}",
-        page_size=5
+        page_size=5,
     )
-    return dist_matrix, props_df
+    return mols, props_df
+
+
+@app.cell(hide_code=True)
+def _(mo):
+    fp_radius = mo.ui.number(start=1, stop=6, step=1, value=2, label="Morgan radius")
+    fp_size = mo.ui.number(
+        start=512, stop=4096, step=512, value=2048, label="Fingerprint size"
+    )
+    fp_controls = mo.vstack([fp_radius, fp_size], align="start")
+    mo.md(f"""
+    ## Fingerprint Distance Matrix
+
+    {fp_controls}
+    """)
+    return fp_radius, fp_size
+
+
+@app.cell(hide_code=True)
+def _(DataStructs, fp_radius, fp_size, mo, mols, np, rdFingerprintGenerator):
+    morgan_gen = rdFingerprintGenerator.GetMorganGenerator(
+        radius=fp_radius.value, fpSize=fp_size.value
+    )
+    fps = [morgan_gen.GetFingerprint(mol) for mol in mols]
+
+    dist_matrix = np.zeros((len(mols), len(mols)), dtype=np.float32)
+    for i in mo.status.progress_bar(
+        range(1, len(mols)), title="Building distance matrix"
+    ):
+        sims = DataStructs.BulkTanimotoSimilarity(fps[i], fps[:i])
+        dist_matrix[i, :i] = 1.0 - np.asarray(sims, dtype=np.float32)
+        dist_matrix[:i, i] = dist_matrix[i, :i]
+    return (dist_matrix,)
 
 
 @app.cell(hide_code=True)
@@ -280,24 +305,70 @@ def _(
 
 @app.cell(hide_code=True)
 def _(mo):
-    mo.md("""
+    demo_gif = mo.center(mo.image("marimo-chemspace_169.gif", width=1200))
+    mo.md(f"""
     ## Selection and Table View
     Select points on the scatter plot (box/lasso with Shift+drag) to inspect
     molecule structures and descriptors in a formatted table.
+
+    {demo_gif}
     """)
     return
 
 
 @app.cell(hide_code=True)
-def _(labels, mo, n_clusters, n_noise, plt, x_coords, y_coords):
+def _(mo):
+    point_size_input = mo.ui.number(
+        start=1, stop=100, step=1, value=20, label="Cluster point size"
+    )
+    noise_size_input = mo.ui.number(
+        start=1, stop=100, step=1, value=15, label="Noise point size"
+    )
+    cluster_alpha_input = mo.ui.number(
+        start=0.1, stop=1.0, step=0.1, value=0.8, label="Cluster alpha"
+    )
+    noise_alpha_input = mo.ui.number(
+        start=0.1, stop=1.0, step=0.1, value=0.4, label="Noise alpha"
+    )
+    plot_controls = mo.hstack(
+        [point_size_input, noise_size_input, cluster_alpha_input, noise_alpha_input],
+        align="start",
+    )
+    mo.md(f"""
+    ### Plot Style
+
+    {plot_controls}
+    """)
+    return (
+        cluster_alpha_input,
+        noise_alpha_input,
+        noise_size_input,
+        point_size_input,
+    )
+
+
+@app.cell(hide_code=True)
+def _(
+    cluster_alpha_input,
+    labels,
+    mo,
+    n_clusters,
+    n_noise,
+    noise_alpha_input,
+    noise_size_input,
+    plt,
+    point_size_input,
+    x_coords,
+    y_coords,
+):
     fig, ax = plt.subplots(figsize=(10, 6))
     noise_mask = labels == -1
     ax.scatter(
         x_coords[noise_mask],
         y_coords[noise_mask],
         c="lightgray",
-        s=15,
-        alpha=0.4,
+        s=noise_size_input.value,
+        alpha=noise_alpha_input.value,
         edgecolors="none",
         label="noise",
     )
@@ -307,8 +378,8 @@ def _(labels, mo, n_clusters, n_noise, plt, x_coords, y_coords):
         y_coords[cluster_mask],
         c=labels[cluster_mask],
         cmap=plt.get_cmap("tab20", max(n_clusters, 1)),
-        s=20,
-        alpha=0.8,
+        s=point_size_input.value,
+        alpha=cluster_alpha_input.value,
         edgecolors="none",
     )
     ax.set_xlabel("t-SNE 1")
@@ -365,9 +436,7 @@ def selection_display(
                 chart,
                 include_noise_checkbox,
                 mo.callout(
-                    mo.md(
-                        "No rows to show after filtering `cluster = -1` (noise)."
-                    ),
+                    mo.md("No rows to show after filtering `cluster = -1` (noise)."),
                     kind="warn",
                 ),
             ],
@@ -393,11 +462,6 @@ def selection_display(
         ],
         align="center",
     )
-    return
-
-
-@app.cell(hide_code=True)
-def _():
     return
 
 
