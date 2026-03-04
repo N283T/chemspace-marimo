@@ -61,15 +61,16 @@ def _(mo):
     n_mols = mo.ui.number(
         start=100, stop=5000, step=100, value=2000, label="Number of molecules"
     )
+    load_button = mo.ui.run_button(label="Load molecules")
     mo.md(f"""
     ## Data Preparation
     Load NCI molecules from RDKit sample data, compute Morgan fingerprints,
     build a Tanimoto distance matrix, and assemble a `pandas.DataFrame`
     with molecular properties.
 
-    {n_mols}
+    {mo.hstack([n_mols, load_button], align="end")}
     """)
-    return (n_mols,)
+    return load_button, n_mols
 
 
 @app.cell(hide_code=True)
@@ -79,12 +80,21 @@ def _(
     Lipinski,
     RDConfig,
     RDLogger,
+    load_button,
     mo,
     mol_to_svg,
     n_mols,
     os,
     pd,
 ):
+    mo.stop(
+        not load_button.value,
+        mo.callout(
+            mo.md("Click **Load molecules** to load the data."),
+            kind="info",
+        ),
+    )
+
     smi_path = os.path.join(RDConfig.RDDataDir, "NCI", "first_5K.smi")
     RDLogger.DisableLog("rdApp.error")
 
@@ -96,17 +106,6 @@ def _(
         nameColumn=1,
     )
     mols = [mol for mol in supplier if mol is not None][: n_mols.value]
-
-    mo.stop(
-        len(mols) == 0,
-        mo.callout(
-            mo.md(
-                "**No molecules loaded.** "
-                "Run this cell with **Cmd+R** or click the play button."
-            ),
-            kind="warn",
-        ),
-    )
 
     props_df = pd.DataFrame(
         {
