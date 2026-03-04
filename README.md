@@ -23,13 +23,15 @@ Explore chemical space on a t-SNE scatter plot, tune embedding and clustering pa
 
 ## Quick Start
 
+No install needed — just run with [PEP 723](https://peps.python.org/pep-0723/) inline metadata:
+
+```bash
+uvx marimo edit ./app.py --sandbox
+```
+
+Or with a local virtual environment:
+
 ```bash
 uv sync
 uv run marimo edit app.py
-```
-
-Or run as a script with inline dependencies:
-
-```bash
-uv run app.py
 ```
