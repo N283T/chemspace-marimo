@@ -15,7 +15,7 @@ __generated_with = "0.20.2"
 app = marimo.App(width="full")
 
 
-@app.cell
+@app.cell(hide_code=True)
 def _():
     """Shared imports."""
     import os
@@ -132,7 +132,7 @@ def _(
     return mols, props_df
 
 
-@app.cell
+@app.cell(hide_code=True)
 def _(mo):
     fp_radius = mo.ui.number(start=1, stop=6, step=1, value=2, label="Morgan radius")
     fp_size = mo.ui.number(
@@ -147,7 +147,7 @@ def _(mo):
     return fp_radius, fp_size
 
 
-@app.cell
+@app.cell(hide_code=True)
 def _(DataStructs, fp_radius, fp_size, mo, mols, np, rdFingerprintGenerator):
     morgan_gen = rdFingerprintGenerator.GetMorganGenerator(
         radius=fp_radius.value, fpSize=fp_size.value
@@ -226,7 +226,7 @@ def _(mo):
     )
 
 
-@app.cell
+@app.cell(hide_code=True)
 def _(
     HDBSCAN,
     TSNE,
@@ -313,7 +313,7 @@ def _(
     return labels, n_clusters, n_noise, x_coords, y_coords
 
 
-@app.cell
+@app.cell(hide_code=True)
 def _(mo):
     demo_gif = mo.center(
         mo.image(
