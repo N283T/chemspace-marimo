@@ -61,16 +61,16 @@ def _(mo):
     n_mols = mo.ui.number(
         start=100, stop=5000, step=100, value=2000, label="Number of molecules"
     )
-    load_button = mo.ui.run_button(label="Load molecules")
     mo.md(f"""
     ## Data Preparation
     Load NCI molecules from RDKit sample data, compute Morgan fingerprints,
     build a Tanimoto distance matrix, and assemble a `pandas.DataFrame`
     with molecular properties.
+    If you see stale data, re-run the table cell below.
 
-    {mo.hstack([n_mols, load_button], align="end")}
+    {n_mols}
     """)
-    return load_button, n_mols
+    return (n_mols,)
 
 
 @app.cell(hide_code=True)
@@ -80,21 +80,12 @@ def _(
     Lipinski,
     RDConfig,
     RDLogger,
-    load_button,
     mo,
     mol_to_svg,
     n_mols,
     os,
     pd,
 ):
-    mo.stop(
-        not load_button.value,
-        mo.callout(
-            mo.md("Click **Load molecules** to load the data."),
-            kind="info",
-        ),
-    )
-
     smi_path = os.path.join(RDConfig.RDDataDir, "NCI", "first_5K.smi")
     RDLogger.DisableLog("rdApp.error")
 
@@ -366,7 +357,6 @@ def _(mo):
 def _(
     cluster_alpha_input,
     labels,
-    load_button,
     mo,
     n_clusters,
     n_noise,
@@ -377,13 +367,6 @@ def _(
     x_coords,
     y_coords,
 ):
-    mo.stop(
-        not load_button.value,
-        mo.callout(
-            mo.md("Click **Load molecules** to load the data."),
-            kind="info",
-        ),
-    )
     fig, ax = plt.subplots(figsize=(10, 6))
     noise_mask = labels == -1
     ax.scatter(
@@ -420,7 +403,6 @@ def selection_display(
     chart,
     include_noise_checkbox,
     labels,
-    load_button,
     mo,
     mol_to_svg,
     np,
@@ -428,13 +410,6 @@ def selection_display(
     x_coords,
     y_coords,
 ):
-    mo.stop(
-        not load_button.value,
-        mo.callout(
-            mo.md("Click **Load molecules** to load the data."),
-            kind="info",
-        ),
-    )
     selected_indices = np.where(chart.value.get_mask(x_coords, y_coords))[0]
     mo.stop(
         len(selected_indices) == 0,
