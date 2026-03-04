@@ -303,6 +303,19 @@ def _(
     return labels, n_clusters, n_noise, x_coords, y_coords
 
 
+@app.cell
+def _(mo):
+    demo_gif = mo.center(mo.image("marimo-chemspace_169.gif", width=1200))
+    mo.md(f"""
+    ## Selection and Table View
+    Select points on the scatter plot (box/lasso with Shift+drag) to inspect
+    molecule structures and descriptors in a formatted table.
+
+    {demo_gif}
+    """)
+    return
+
+
 @app.cell(hide_code=True)
 def _(mo):
     point_size_input = mo.ui.number(
@@ -322,9 +335,7 @@ def _(mo):
         align="start",
     )
     mo.md(f"""
-    ## Selection and Table View
-    Select points on the scatter plot (box/lasso with Shift+drag) to inspect
-    molecule structures and descriptors in a formatted table.
+    ### Plot Style
 
     {plot_controls}
     """)
@@ -451,11 +462,6 @@ def selection_display(
         ],
         align="center",
     )
-    return
-
-
-@app.cell(hide_code=True)
-def _():
     return
 
 
