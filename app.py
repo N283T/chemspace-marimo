@@ -97,6 +97,17 @@ def _(
     )
     mols = [mol for mol in supplier if mol is not None][: n_mols.value]
 
+    mo.stop(
+        len(mols) == 0,
+        mo.callout(
+            mo.md(
+                "**No molecules loaded.** "
+                "Run this cell with **Cmd+R** or click the play button."
+            ),
+            kind="warn",
+        ),
+    )
+
     props_df = pd.DataFrame(
         {
             "Mol": mols,
