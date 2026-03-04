@@ -122,7 +122,7 @@ def _(
     return mols, props_df
 
 
-@app.cell
+@app.cell(hide_code=True)
 def _(mo):
     fp_radius = mo.ui.number(start=1, stop=6, step=1, value=2, label="Morgan radius")
     fp_size = mo.ui.number(
@@ -303,7 +303,7 @@ def _(
     return labels, n_clusters, n_noise, x_coords, y_coords
 
 
-@app.cell
+@app.cell(hide_code=True)
 def _(mo):
     demo_gif = mo.center(mo.image("marimo-chemspace_169.gif", width=1200))
     mo.md(f"""
