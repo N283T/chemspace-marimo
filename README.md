@@ -1,6 +1,9 @@
 # chemspace-marimo
 
 [![Open in molab](https://molab.marimo.io/molab-shield.svg)](https://molab.marimo.io/notebooks/nb_Sb65kt4KiKuq5cLowaaseb)
+[![marimo gallery](https://img.shields.io/badge/marimo-gallery-blue)](https://molab.marimo.io/github/marimo-team/gallery-examples/blob/main/notebooks/library/chemical-space-explorer.py)
+
+🎉 **Featured in the [marimo official gallery](https://molab.marimo.io/github/marimo-team/gallery-examples/blob/main/notebooks/library/chemical-space-explorer.py)!** 🚀
 
 Interactive chemical space viewer built with [marimo](https://marimo.io/).
 
